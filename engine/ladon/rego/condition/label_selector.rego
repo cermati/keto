@@ -18,7 +18,7 @@ labelSelector_selectorMatch(selector, labels) {
     labelSelector_expressionMatch(selector, labels)
 }
 
-# labelSelector_selectorMatch returns true if the labels set matches the
+# labelSelector_labelMatch returns true if the labels set matches the
 # "matchLabels" map. Otherwise, returns undefined.
 #
 # For the exact specification of what a match is, see:
@@ -104,14 +104,15 @@ labelSelector_expressionMatchNotIn_AllMatch(selector, labels) {
         expr := selector.matchExpressions[i]
         expr.operator == "NotIn"
 
-        # Get the metadata.label value, or null if it does not exist
+        # Get the metadata.label value, or null if it does not exist. NotIn
+        # selector matches if the labels does not contain the key.
         labelValue := object.get(labels, expr.key, null)
 
         # The expr.values array must not be empty
         count(expr.values) > 0
 
-        # The value of labels[expr.key] must not be in the expr.values array
-        not _contains(expr.values, labels[expr.key])
+        # The value of labelValue must not be in the expr.values array
+        not _contains(expr.values, labelValue)
     ]
 
     count(allNotInExpressions) == count(matchingNotInExpressions)
@@ -258,10 +259,16 @@ test_labelSelector_expressionMatchNotIn_AllMatch {
         "team": "engineering"
     }
 
-    selectorMatches := {
+    selectorMatches1 := {
         "matchExpressions": [
             { "key": "organization", "operator": "NotIn", "values": ["bar_corp", "baz_ltd"]},
             { "key": "team", "operator": "NotIn", "values": ["finance"]}
+        ]
+    }
+
+    selectorMatches2 := {
+        "matchExpressions": [
+            { "key": "unknownFieldName", "operator": "NotIn", "values": ["foo", "bar"]},
         ]
     }
 
@@ -278,7 +285,8 @@ test_labelSelector_expressionMatchNotIn_AllMatch {
         ]
     }
 
-    labelSelector_expressionMatchNotIn_AllMatch(selectorMatches, labels)
+    labelSelector_expressionMatchNotIn_AllMatch(selectorMatches1, labels)
+    labelSelector_expressionMatchNotIn_AllMatch(selectorMatches2, labels)
     not labelSelector_expressionMatchNotIn_AllMatch(selectorNotMatch1, labels)
     not labelSelector_expressionMatchNotIn_AllMatch(selectorNotMatch2, labels)
 }

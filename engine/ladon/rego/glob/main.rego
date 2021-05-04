@@ -13,9 +13,9 @@ allow {
 
 decide_allow(policies, roles) {
     effects := [effect | effect := policies[i].effect
-        matcher(policies[i].resources, request.resource)
+        core.match_glob(policies[i].resources, request.resource)
         match_subjects(policies[i].subjects, roles, request.subject)
-        matcher(policies[i].actions, request.action)
+        core.match_glob(policies[i].actions, request.action)
         condition.all_conditions_true(policies[i])
     ]
 
@@ -25,16 +25,10 @@ decide_allow(policies, roles) {
     core.effect_allow(effects)
 }
 
-matcher(patterns, compare) {
-    pattern := patterns[_]
-    glob.match(pattern, [":"], compare, output)
-    output == true
-}
-
 match_subjects(matches, roles, subject) {
-    matcher(matches, subject)
+    core.match_glob(matches, subject)
 } {
-    r := core.role_ids(roles, subject)
+    r := core.role_ids_glob(roles, subject)
     rr := r[_]
-    matcher(matches, rr)
+    core.match_glob(matches, rr)
 }

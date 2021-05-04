@@ -221,3 +221,21 @@ test_allow_combinations_exactly_one_alternative {
     not decide_allow([combination_policy], []) with input as {"resource": "articles:foobar:9", "subject": "subjects:catdog:9", "action": "actions:cat:9"}
     not decide_allow([combination_policy], []) with input as {"resource": "articles:foobar:9", "subject": "subjects:cat:9", "action": "actions:catdog:9"}
 }
+
+# Usage of glob patterns in role members
+policy_with_role = {
+    "id": "4",
+    "resources": [`articles:4`],
+    "subjects": [`role-with-glob`],
+    "actions": [`actions:4`],
+    "effect": "allow",
+}
+
+role_with_glob = {
+    "id": "role-with-glob",
+    "members": [`*@mail.com`]
+}
+
+test_allow_policy {
+    decide_allow([policy_with_role], [role_with_glob]) with input as {"resource": "articles:4", "subject": "subject4@mail.com", "action": "actions:4"}
+}

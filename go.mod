@@ -3,16 +3,15 @@ module github.com/ory/keto
 require (
 	github.com/akutz/goof v0.1.2 // indirect
 	github.com/akutz/gotil v0.1.0
-	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535 // indirect
 	github.com/containerd/continuity v0.0.0-20200228182428-0f16d7a0959c // indirect
 	github.com/go-errors/errors v1.0.1
-	github.com/go-openapi/errors v0.19.4
-	github.com/go-openapi/runtime v0.19.5
-	github.com/go-openapi/strfmt v0.19.5
-	github.com/go-openapi/swag v0.19.5
-	github.com/go-openapi/validate v0.19.3
+	github.com/go-openapi/errors v0.20.0
+	github.com/go-openapi/runtime v0.19.27
+	github.com/go-openapi/strfmt v0.20.1
+	github.com/go-openapi/swag v0.19.15
+	github.com/go-openapi/validate v0.20.2
 	github.com/go-sql-driver/mysql v1.5.0
-	github.com/go-swagger/go-swagger v0.21.1-0.20200107003254-1c98855b472d
+	github.com/go-swagger/go-swagger v0.27.0
 	github.com/gobuffalo/packr v1.24.1
 	github.com/gorilla/sessions v1.1.3
 	github.com/gorilla/websocket v1.4.2
@@ -34,16 +33,12 @@ require (
 	github.com/rs/cors v1.6.0
 	github.com/rubenv/sql-migrate v0.0.0-20190327083759-54bad0a9b051
 	github.com/shopspring/decimal v1.2.0 // indirect
-	github.com/spf13/cobra v1.0.0
-	github.com/spf13/viper v1.7.0 // indirect
+	github.com/spf13/cobra v1.1.3
 	github.com/sqs/goreturns v0.0.0-20181028201513-538ac6014518
-	github.com/stretchr/testify v1.5.1
+	github.com/stretchr/testify v1.7.0
 	github.com/tidwall/sjson v1.1.1 // indirect
 	github.com/urfave/negroni v1.0.0
-	go.mongodb.org/mongo-driver v1.3.4 // indirect
-	golang.org/x/tools v0.0.0-20201009032223-96877f285f7e
-	google.golang.org/grpc v1.29.1 // indirect
-	google.golang.org/protobuf v1.24.0 // indirect
+	golang.org/x/tools v0.1.0
 )
 
 go 1.14

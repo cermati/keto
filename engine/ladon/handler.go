@@ -106,6 +106,27 @@ func (e *Engine) Register(r *httprouter.Router) {
 	//       500: genericError
 	r.POST(BasePath+"/allowed", e.engine.Evaluate(e.eval))
 
+	// swagger:route POST /engines/acp/ory/{flavor}/allowed-subjects engines doOryAccessControlPoliciesAllowedSubjects
+	//
+	// Get a list of subjects that are allowed to do an action
+	//
+	// Will include subjects with glob/regex patterns present in them. Currently,
+	// only supports the "glob" flavor.
+	//
+	//
+	//     Consumes:
+	//     - application/json
+	//
+	//     Produces:
+	//     - application/json
+	//
+	//     Schemes: http, https
+	//
+	//     Responses:
+	//       200: authorizedSubjectsResult
+	//       500: genericError
+	r.POST(BasePath+"/allowed-subjects", e.engine.EvaluateAllowedSubjects(e.evalAllowedSubjects))
+
 	// swagger:route PUT /engines/acp/ory/{flavor}/policies engines upsertOryAccessControlPolicy
 	//
 	// Upsert an ORY Access Control Policy
@@ -495,6 +516,41 @@ func (e *Engine) eval(ctx context.Context, r *http.Request, ps httprouter.Params
 	if err := dec.Decode(&i); err != nil {
 		return nil, errors.WithStack(err)
 	}
+
+	return []func(*rego.Rego){
+		rego.Query(query),
+		rego.Store(store),
+		rego.Input(&i),
+	}, nil
+}
+
+// Similar to e.eval(), this function executes the Rego query engine. The only
+// difference is that this one has a different query path (.allowed_subjects
+// vs .allowed) and sets a "__ory_allowed_subjects" flag in the input context.
+func (e *Engine) evalAllowedSubjects(
+	ctx context.Context,
+	r *http.Request,
+	ps httprouter.Params,
+) ([]func(*rego.Rego), error) {
+	f, err := flavor(ps)
+	if err != nil {
+		return nil, err
+	}
+
+	query := fmt.Sprintf("data.ory.%s.allowed_subjects", f)
+	store, err := e.s.Storage(ctx, schema, []string{policyCollection(f), roleCollection(f)})
+	if err != nil {
+		return nil, err
+	}
+
+	var i InputAllowedSubjects
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+	if err := dec.Decode(&i); err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	i.Context["__ory_allowed_subjects"] = true
 
 	return []func(*rego.Rego){
 		rego.Query(query),

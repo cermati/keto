@@ -236,6 +236,74 @@ role_with_glob = {
     "members": [`*@mail.com`]
 }
 
-test_allow_policy {
+test_allow_policy_with_glob {
     decide_allow([policy_with_role], [role_with_glob]) with input as {"resource": "articles:4", "subject": "subject4@mail.com", "action": "actions:4"}
+}
+
+# Test decide_allowed_subjects
+allowed_subjects_policices = [
+    {
+        "id": "policy:match:allow:1",
+        "effect": "allow",
+        "resources": ["resource:1"],
+        "actions": ["action:1"],
+        "subjects": [
+            "user:allowed:1",
+            "user:denied:1",
+            "role:allowed:1"
+        ]
+    },
+    {
+        "id": "policy:not-match:allow:1",
+        "effect": "allow",
+        "resources": ["resource:does-not-exist"],
+        "actions": ["action:does-not-exist"],
+        "subjects": [
+            "user:not-match:1",
+            "user:not-match:2"
+        ]
+    },
+    {
+        "id": "policy:match:deny:1",
+        "effect": "deny",
+        "resources": ["resource:1"],
+        "actions": ["action:1"],
+        "subjects": [
+            "user:denied:1",
+            "role:denied:1"
+        ]
+    }
+]
+
+allowed_subjects_roles = [
+    {
+        "id": "role:allowed:1",
+        "members": ["user:allowed:1", "user:allowed:2", "user:allowed:glob:*"]
+    },
+    {
+        "id": "role:denied:1",
+        "members": ["user:denied:1", "user:denied:2", "user:denied:glob:*"]
+    }
+]
+
+test_decide_allowed_subjects {
+    input := {
+        "resource": "resource:1",
+        "action": "action:1",
+        "context": {
+            "__ory_allowed_subjects": true
+        }
+    }
+
+    subjects := decide_allowed_subjects(allowed_subjects_policices, allowed_subjects_roles) with input as input
+    subjects_set := { e | e := subjects[_] }
+
+    expected_subjects := {"user:allowed:1", "user:allowed:2", "user:allowed:glob:*"}
+
+    # Elements in the subjects list should be unique
+    count(subjects) == count(subjects_set)
+
+    # The elements must match with the expected result
+    count(subjects) == count(expected_subjects)
+    count(subjects_set - expected_subjects) == 0
 }

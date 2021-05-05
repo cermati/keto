@@ -107,6 +107,81 @@
         }
       }
     },
+    "/engines/acp/ory/{flavor}/allowed-subjects": {
+      "post": {
+        "description": "Will include subjects with glob/regex patterns present in them. Currently,\nonly supports the \"glob\" flavor.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "schemes": [
+          "http",
+          "https"
+        ],
+        "tags": [
+          "engines"
+        ],
+        "summary": "Get a list of subjects that are allowed to do an action",
+        "operationId": "doOryAccessControlPoliciesAllowedSubjects",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "The ORY Access Control Policy flavor. Can be \"regex\", \"glob\", and \"exact\".",
+            "name": "flavor",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/oryAccessControlPolicyAllowedSubjectsInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "authorizedSubjectsResult",
+            "schema": {
+              "$ref": "#/definitions/authorizedSubjectsResult"
+            }
+          },
+          "500": {
+            "description": "The standard error format",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "details": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                },
+                "message": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "request": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/engines/acp/ory/{flavor}/policies": {
       "get": {
         "description": "List ORY Access Control Policies",
@@ -1065,6 +1140,22 @@
         }
       }
     },
+    "authorizedSubjectsResult": {
+      "type": "object",
+      "title": "AuthorizedSubjectsResult is a list of subjects allowed to do an action.",
+      "required": [
+        "subjects"
+      ],
+      "properties": {
+        "subjects": {
+          "description": "Subjects is a list of subjects allowed to do an action",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "healthNotReadyStatus": {
       "type": "object",
       "properties": {
@@ -1149,6 +1240,25 @@
         },
         "subject": {
           "description": "Subject is the subject that is requesting access.",
+          "type": "string"
+        }
+      }
+    },
+    "oryAccessControlPolicyAllowedSubjectsInput": {
+      "type": "object",
+      "title": "Input for getting a list of subjects that are allowed to do an action.",
+      "properties": {
+        "action": {
+          "description": "Action is the action that is requested on the resource.",
+          "type": "string"
+        },
+        "context": {
+          "description": "Context is the request's environmental context.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "resource": {
+          "description": "Resource is the resource that access is requested to.",
           "type": "string"
         }
       }

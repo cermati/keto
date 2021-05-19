@@ -25,29 +25,34 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption is the option for Client methods
+type ClientOption func(*runtime.ClientOperation)
+
 // ClientService is the interface for Client methods
 type ClientService interface {
-	AddOryAccessControlPolicyRoleMembers(params *AddOryAccessControlPolicyRoleMembersParams) (*AddOryAccessControlPolicyRoleMembersOK, error)
+	AddOryAccessControlPolicyRoleMembers(params *AddOryAccessControlPolicyRoleMembersParams, opts ...ClientOption) (*AddOryAccessControlPolicyRoleMembersOK, error)
 
-	DeleteOryAccessControlPolicy(params *DeleteOryAccessControlPolicyParams) (*DeleteOryAccessControlPolicyNoContent, error)
+	DeleteOryAccessControlPolicy(params *DeleteOryAccessControlPolicyParams, opts ...ClientOption) (*DeleteOryAccessControlPolicyNoContent, error)
 
-	DeleteOryAccessControlPolicyRole(params *DeleteOryAccessControlPolicyRoleParams) (*DeleteOryAccessControlPolicyRoleNoContent, error)
+	DeleteOryAccessControlPolicyRole(params *DeleteOryAccessControlPolicyRoleParams, opts ...ClientOption) (*DeleteOryAccessControlPolicyRoleNoContent, error)
 
-	DoOryAccessControlPoliciesAllow(params *DoOryAccessControlPoliciesAllowParams) (*DoOryAccessControlPoliciesAllowOK, error)
+	DoOryAccessControlPoliciesAllow(params *DoOryAccessControlPoliciesAllowParams, opts ...ClientOption) (*DoOryAccessControlPoliciesAllowOK, error)
 
-	GetOryAccessControlPolicy(params *GetOryAccessControlPolicyParams) (*GetOryAccessControlPolicyOK, error)
+	DoOryAccessControlPoliciesAllowedSubjects(params *DoOryAccessControlPoliciesAllowedSubjectsParams, opts ...ClientOption) (*DoOryAccessControlPoliciesAllowedSubjectsOK, error)
 
-	GetOryAccessControlPolicyRole(params *GetOryAccessControlPolicyRoleParams) (*GetOryAccessControlPolicyRoleOK, error)
+	GetOryAccessControlPolicy(params *GetOryAccessControlPolicyParams, opts ...ClientOption) (*GetOryAccessControlPolicyOK, error)
 
-	ListOryAccessControlPolicies(params *ListOryAccessControlPoliciesParams) (*ListOryAccessControlPoliciesOK, error)
+	GetOryAccessControlPolicyRole(params *GetOryAccessControlPolicyRoleParams, opts ...ClientOption) (*GetOryAccessControlPolicyRoleOK, error)
 
-	ListOryAccessControlPolicyRoles(params *ListOryAccessControlPolicyRolesParams) (*ListOryAccessControlPolicyRolesOK, error)
+	ListOryAccessControlPolicies(params *ListOryAccessControlPoliciesParams, opts ...ClientOption) (*ListOryAccessControlPoliciesOK, error)
 
-	RemoveOryAccessControlPolicyRoleMembers(params *RemoveOryAccessControlPolicyRoleMembersParams) (*RemoveOryAccessControlPolicyRoleMembersOK, error)
+	ListOryAccessControlPolicyRoles(params *ListOryAccessControlPolicyRolesParams, opts ...ClientOption) (*ListOryAccessControlPolicyRolesOK, error)
 
-	UpsertOryAccessControlPolicy(params *UpsertOryAccessControlPolicyParams) (*UpsertOryAccessControlPolicyOK, error)
+	RemoveOryAccessControlPolicyRoleMembers(params *RemoveOryAccessControlPolicyRoleMembersParams, opts ...ClientOption) (*RemoveOryAccessControlPolicyRoleMembersOK, error)
 
-	UpsertOryAccessControlPolicyRole(params *UpsertOryAccessControlPolicyRoleParams) (*UpsertOryAccessControlPolicyRoleOK, error)
+	UpsertOryAccessControlPolicy(params *UpsertOryAccessControlPolicyParams, opts ...ClientOption) (*UpsertOryAccessControlPolicyOK, error)
+
+	UpsertOryAccessControlPolicyRole(params *UpsertOryAccessControlPolicyRoleParams, opts ...ClientOption) (*UpsertOryAccessControlPolicyRoleOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -58,13 +63,12 @@ type ClientService interface {
   Roles group several subjects into one. Rules can be assigned to ORY Access Control Policy (OACP) by using the Role ID
 as subject in the OACP.
 */
-func (a *Client) AddOryAccessControlPolicyRoleMembers(params *AddOryAccessControlPolicyRoleMembersParams) (*AddOryAccessControlPolicyRoleMembersOK, error) {
+func (a *Client) AddOryAccessControlPolicyRoleMembers(params *AddOryAccessControlPolicyRoleMembersParams, opts ...ClientOption) (*AddOryAccessControlPolicyRoleMembersOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewAddOryAccessControlPolicyRoleMembersParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "addOryAccessControlPolicyRoleMembers",
 		Method:             "PUT",
 		PathPattern:        "/engines/acp/ory/{flavor}/roles/{id}/members",
@@ -75,7 +79,12 @@ func (a *Client) AddOryAccessControlPolicyRoleMembers(params *AddOryAccessContro
 		Reader:             &AddOryAccessControlPolicyRoleMembersReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -92,13 +101,12 @@ func (a *Client) AddOryAccessControlPolicyRoleMembers(params *AddOryAccessContro
 /*
   DeleteOryAccessControlPolicy Delete an ORY Access Control Policy
 */
-func (a *Client) DeleteOryAccessControlPolicy(params *DeleteOryAccessControlPolicyParams) (*DeleteOryAccessControlPolicyNoContent, error) {
+func (a *Client) DeleteOryAccessControlPolicy(params *DeleteOryAccessControlPolicyParams, opts ...ClientOption) (*DeleteOryAccessControlPolicyNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteOryAccessControlPolicyParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "deleteOryAccessControlPolicy",
 		Method:             "DELETE",
 		PathPattern:        "/engines/acp/ory/{flavor}/policies/{id}",
@@ -109,7 +117,12 @@ func (a *Client) DeleteOryAccessControlPolicy(params *DeleteOryAccessControlPoli
 		Reader:             &DeleteOryAccessControlPolicyReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -129,13 +142,12 @@ func (a *Client) DeleteOryAccessControlPolicy(params *DeleteOryAccessControlPoli
   Roles group several subjects into one. Rules can be assigned to ORY Access Control Policy (OACP) by using the Role ID
 as subject in the OACP.
 */
-func (a *Client) DeleteOryAccessControlPolicyRole(params *DeleteOryAccessControlPolicyRoleParams) (*DeleteOryAccessControlPolicyRoleNoContent, error) {
+func (a *Client) DeleteOryAccessControlPolicyRole(params *DeleteOryAccessControlPolicyRoleParams, opts ...ClientOption) (*DeleteOryAccessControlPolicyRoleNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteOryAccessControlPolicyRoleParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "deleteOryAccessControlPolicyRole",
 		Method:             "DELETE",
 		PathPattern:        "/engines/acp/ory/{flavor}/roles/{id}",
@@ -146,7 +158,12 @@ func (a *Client) DeleteOryAccessControlPolicyRole(params *DeleteOryAccessControl
 		Reader:             &DeleteOryAccessControlPolicyRoleReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -167,13 +184,12 @@ func (a *Client) DeleteOryAccessControlPolicyRole(params *DeleteOryAccessControl
 `{"allowed":"true"}` will be sent. If the request is denied, a 403 response with `{"allowed":"false"}` will
 be sent instead.
 */
-func (a *Client) DoOryAccessControlPoliciesAllow(params *DoOryAccessControlPoliciesAllowParams) (*DoOryAccessControlPoliciesAllowOK, error) {
+func (a *Client) DoOryAccessControlPoliciesAllow(params *DoOryAccessControlPoliciesAllowParams, opts ...ClientOption) (*DoOryAccessControlPoliciesAllowOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDoOryAccessControlPoliciesAllowParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "doOryAccessControlPoliciesAllow",
 		Method:             "POST",
 		PathPattern:        "/engines/acp/ory/{flavor}/allowed",
@@ -184,7 +200,12 @@ func (a *Client) DoOryAccessControlPoliciesAllow(params *DoOryAccessControlPolic
 		Reader:             &DoOryAccessControlPoliciesAllowReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -199,15 +220,55 @@ func (a *Client) DoOryAccessControlPoliciesAllow(params *DoOryAccessControlPolic
 }
 
 /*
+  DoOryAccessControlPoliciesAllowedSubjects gets a list of subjects that are allowed to do an action
+
+  Will include subjects with glob/regex patterns present in them. Currently,
+only supports the "glob" flavor.
+*/
+func (a *Client) DoOryAccessControlPoliciesAllowedSubjects(params *DoOryAccessControlPoliciesAllowedSubjectsParams, opts ...ClientOption) (*DoOryAccessControlPoliciesAllowedSubjectsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDoOryAccessControlPoliciesAllowedSubjectsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "doOryAccessControlPoliciesAllowedSubjects",
+		Method:             "POST",
+		PathPattern:        "/engines/acp/ory/{flavor}/allowed-subjects",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DoOryAccessControlPoliciesAllowedSubjectsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DoOryAccessControlPoliciesAllowedSubjectsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for doOryAccessControlPoliciesAllowedSubjects: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
   GetOryAccessControlPolicy Get an ORY Access Control Policy
 */
-func (a *Client) GetOryAccessControlPolicy(params *GetOryAccessControlPolicyParams) (*GetOryAccessControlPolicyOK, error) {
+func (a *Client) GetOryAccessControlPolicy(params *GetOryAccessControlPolicyParams, opts ...ClientOption) (*GetOryAccessControlPolicyOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetOryAccessControlPolicyParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getOryAccessControlPolicy",
 		Method:             "GET",
 		PathPattern:        "/engines/acp/ory/{flavor}/policies/{id}",
@@ -218,7 +279,12 @@ func (a *Client) GetOryAccessControlPolicy(params *GetOryAccessControlPolicyPara
 		Reader:             &GetOryAccessControlPolicyReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -238,13 +304,12 @@ func (a *Client) GetOryAccessControlPolicy(params *GetOryAccessControlPolicyPara
   Roles group several subjects into one. Rules can be assigned to ORY Access Control Policy (OACP) by using the Role ID
 as subject in the OACP.
 */
-func (a *Client) GetOryAccessControlPolicyRole(params *GetOryAccessControlPolicyRoleParams) (*GetOryAccessControlPolicyRoleOK, error) {
+func (a *Client) GetOryAccessControlPolicyRole(params *GetOryAccessControlPolicyRoleParams, opts ...ClientOption) (*GetOryAccessControlPolicyRoleOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetOryAccessControlPolicyRoleParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getOryAccessControlPolicyRole",
 		Method:             "GET",
 		PathPattern:        "/engines/acp/ory/{flavor}/roles/{id}",
@@ -255,7 +320,12 @@ func (a *Client) GetOryAccessControlPolicyRole(params *GetOryAccessControlPolicy
 		Reader:             &GetOryAccessControlPolicyRoleReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -272,13 +342,12 @@ func (a *Client) GetOryAccessControlPolicyRole(params *GetOryAccessControlPolicy
 /*
   ListOryAccessControlPolicies List ORY Access Control Policies
 */
-func (a *Client) ListOryAccessControlPolicies(params *ListOryAccessControlPoliciesParams) (*ListOryAccessControlPoliciesOK, error) {
+func (a *Client) ListOryAccessControlPolicies(params *ListOryAccessControlPoliciesParams, opts ...ClientOption) (*ListOryAccessControlPoliciesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewListOryAccessControlPoliciesParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "listOryAccessControlPolicies",
 		Method:             "GET",
 		PathPattern:        "/engines/acp/ory/{flavor}/policies",
@@ -289,7 +358,12 @@ func (a *Client) ListOryAccessControlPolicies(params *ListOryAccessControlPolici
 		Reader:             &ListOryAccessControlPoliciesReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -309,13 +383,12 @@ func (a *Client) ListOryAccessControlPolicies(params *ListOryAccessControlPolici
   Roles group several subjects into one. Rules can be assigned to ORY Access Control Policy (OACP) by using the Role ID
 as subject in the OACP.
 */
-func (a *Client) ListOryAccessControlPolicyRoles(params *ListOryAccessControlPolicyRolesParams) (*ListOryAccessControlPolicyRolesOK, error) {
+func (a *Client) ListOryAccessControlPolicyRoles(params *ListOryAccessControlPolicyRolesParams, opts ...ClientOption) (*ListOryAccessControlPolicyRolesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewListOryAccessControlPolicyRolesParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "listOryAccessControlPolicyRoles",
 		Method:             "GET",
 		PathPattern:        "/engines/acp/ory/{flavor}/roles",
@@ -326,7 +399,12 @@ func (a *Client) ListOryAccessControlPolicyRoles(params *ListOryAccessControlPol
 		Reader:             &ListOryAccessControlPolicyRolesReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -346,13 +424,12 @@ func (a *Client) ListOryAccessControlPolicyRoles(params *ListOryAccessControlPol
   Roles group several subjects into one. Rules can be assigned to ORY Access Control Policy (OACP) by using the Role ID
 as subject in the OACP.
 */
-func (a *Client) RemoveOryAccessControlPolicyRoleMembers(params *RemoveOryAccessControlPolicyRoleMembersParams) (*RemoveOryAccessControlPolicyRoleMembersOK, error) {
+func (a *Client) RemoveOryAccessControlPolicyRoleMembers(params *RemoveOryAccessControlPolicyRoleMembersParams, opts ...ClientOption) (*RemoveOryAccessControlPolicyRoleMembersOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRemoveOryAccessControlPolicyRoleMembersParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "removeOryAccessControlPolicyRoleMembers",
 		Method:             "DELETE",
 		PathPattern:        "/engines/acp/ory/{flavor}/roles/{id}/members/{member}",
@@ -363,7 +440,12 @@ func (a *Client) RemoveOryAccessControlPolicyRoleMembers(params *RemoveOryAccess
 		Reader:             &RemoveOryAccessControlPolicyRoleMembersReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -380,13 +462,12 @@ func (a *Client) RemoveOryAccessControlPolicyRoleMembers(params *RemoveOryAccess
 /*
   UpsertOryAccessControlPolicy Upsert an ORY Access Control Policy
 */
-func (a *Client) UpsertOryAccessControlPolicy(params *UpsertOryAccessControlPolicyParams) (*UpsertOryAccessControlPolicyOK, error) {
+func (a *Client) UpsertOryAccessControlPolicy(params *UpsertOryAccessControlPolicyParams, opts ...ClientOption) (*UpsertOryAccessControlPolicyOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpsertOryAccessControlPolicyParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "upsertOryAccessControlPolicy",
 		Method:             "PUT",
 		PathPattern:        "/engines/acp/ory/{flavor}/policies",
@@ -397,7 +478,12 @@ func (a *Client) UpsertOryAccessControlPolicy(params *UpsertOryAccessControlPoli
 		Reader:             &UpsertOryAccessControlPolicyReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -417,13 +503,12 @@ func (a *Client) UpsertOryAccessControlPolicy(params *UpsertOryAccessControlPoli
   Roles group several subjects into one. Rules can be assigned to ORY Access Control Policy (OACP) by using the Role ID
 as subject in the OACP.
 */
-func (a *Client) UpsertOryAccessControlPolicyRole(params *UpsertOryAccessControlPolicyRoleParams) (*UpsertOryAccessControlPolicyRoleOK, error) {
+func (a *Client) UpsertOryAccessControlPolicyRole(params *UpsertOryAccessControlPolicyRoleParams, opts ...ClientOption) (*UpsertOryAccessControlPolicyRoleOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpsertOryAccessControlPolicyRoleParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "upsertOryAccessControlPolicyRole",
 		Method:             "PUT",
 		PathPattern:        "/engines/acp/ory/{flavor}/roles",
@@ -434,7 +519,12 @@ func (a *Client) UpsertOryAccessControlPolicyRole(params *UpsertOryAccessControl
 		Reader:             &UpsertOryAccessControlPolicyRoleReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

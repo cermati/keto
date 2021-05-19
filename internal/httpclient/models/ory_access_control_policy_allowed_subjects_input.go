@@ -12,10 +12,10 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OryAccessControlPolicyAllowedInput Input for checking if a request is allowed or not.
+// OryAccessControlPolicyAllowedSubjectsInput Input for getting a list of subjects that are allowed to do an action.
 //
-// swagger:model oryAccessControlPolicyAllowedInput
-type OryAccessControlPolicyAllowedInput struct {
+// swagger:model oryAccessControlPolicyAllowedSubjectsInput
+type OryAccessControlPolicyAllowedSubjectsInput struct {
 
 	// Action is the action that is requested on the resource.
 	Action string `json:"action,omitempty"`
@@ -25,23 +25,20 @@ type OryAccessControlPolicyAllowedInput struct {
 
 	// Resource is the resource that access is requested to.
 	Resource string `json:"resource,omitempty"`
-
-	// Subject is the subject that is requesting access.
-	Subject string `json:"subject,omitempty"`
 }
 
-// Validate validates this ory access control policy allowed input
-func (m *OryAccessControlPolicyAllowedInput) Validate(formats strfmt.Registry) error {
+// Validate validates this ory access control policy allowed subjects input
+func (m *OryAccessControlPolicyAllowedSubjectsInput) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this ory access control policy allowed input based on context it is used
-func (m *OryAccessControlPolicyAllowedInput) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this ory access control policy allowed subjects input based on context it is used
+func (m *OryAccessControlPolicyAllowedSubjectsInput) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *OryAccessControlPolicyAllowedInput) MarshalBinary() ([]byte, error) {
+func (m *OryAccessControlPolicyAllowedSubjectsInput) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -49,8 +46,8 @@ func (m *OryAccessControlPolicyAllowedInput) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OryAccessControlPolicyAllowedInput) UnmarshalBinary(b []byte) error {
-	var res OryAccessControlPolicyAllowedInput
+func (m *OryAccessControlPolicyAllowedSubjectsInput) UnmarshalBinary(b []byte) error {
+	var res OryAccessControlPolicyAllowedSubjectsInput
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

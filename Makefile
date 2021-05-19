@@ -1,6 +1,8 @@
 SHELL=/bin/bash -o pipefail
 
-EXECUTABLES = docker-compose docker node npm go
+GO_EXEC = go1.15.8
+
+EXECUTABLES = docker ${GO_EXEC}
 K := $(foreach exec,$(EXECUTABLES),\
         $(if $(shell which $(exec)),some string,$(error "No $(exec) in PATH")))
 
@@ -10,15 +12,15 @@ export PATH := .bin:${PATH}
 .PHONY: deps
 deps:
 ifneq ("$(shell base64 Makefile))","$(shell cat .bin/.lock)")
-		go build -o .bin/go-acc github.com/ory/go-acc
-		go build -o .bin/goreturns github.com/sqs/goreturns
-		go build -o .bin/listx github.com/ory/x/tools/listx
-		go build -o .bin/mockgen github.com/golang/mock/mockgen
-		go build -o .bin/swagger github.com/go-swagger/go-swagger/cmd/swagger
-		go build -o .bin/goimports golang.org/x/tools/cmd/goimports
-		go build -o .bin/ory github.com/ory/cli
-		go build -o .bin/packr github.com/gobuffalo/packr/packr
-		go build -o .bin/go-bindata github.com/go-bindata/go-bindata/go-bindata
+		${GO_EXEC} build -o .bin/go-acc github.com/ory/go-acc
+		${GO_EXEC} build -o .bin/goreturns github.com/sqs/goreturns
+		${GO_EXEC} build -o .bin/listx github.com/ory/x/tools/listx
+		${GO_EXEC} build -o .bin/mockgen github.com/golang/mock/mockgen
+		${GO_EXEC} build -o .bin/swagger github.com/go-swagger/go-swagger/cmd/swagger
+		${GO_EXEC} build -o .bin/goimports golang.org/x/tools/cmd/goimports
+		${GO_EXEC} build -o .bin/ory github.com/ory/cli
+		${GO_EXEC} build -o .bin/packr github.com/gobuffalo/packr/packr
+		${GO_EXEC} build -o .bin/go-bindata github.com/go-bindata/go-bindata/go-bindata
 		echo "v0" > .bin/.lock
 		echo "$$(base64 Makefile)" > .bin/.lock
 endif
@@ -32,7 +34,7 @@ install-stable: deps
 		KETO_LATEST=$$(git describe --abbrev=0 --tags)
 		git checkout $$KETO_LATEST
 		packr
-		GO111MODULE=on go install \
+		GO111MODULE=on ${GO_EXEC} install \
 				-ldflags "-X github.com/ory/keto/cmd.Version=$$KETO_LATEST -X github.com/ory/keto/cmd.Date=`TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ'` -X github.com/ory/keto/cmd.Commit=`git rev-parse HEAD`" \
 				.
 		packr clean
@@ -41,7 +43,7 @@ install-stable: deps
 .PHONY: install
 install: deps
 		packr
-		GO111MODULE=on go install .
+		GO111MODULE=on ${GO_EXEC} install .
 		packr clean
 
 # Generates the SDKs
@@ -59,7 +61,7 @@ sdk: deps
 .PHONY: docker
 docker: deps
 		packr
-		GO111MODULE=on GOOS=linux GOARCH=amd64 go build
+		GO111MODULE=on GOOS=linux GOARCH=amd64 ${GO_EXEC} build
 		docker build -t oryd/keto:latest .
 		rm keto
 		packr clean

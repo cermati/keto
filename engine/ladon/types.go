@@ -23,3 +23,17 @@ type Input struct {
 	// Context is the request's environmental context.
 	Context map[string]interface{} `json:"context"`
 }
+
+// Input for getting a list of subjects that are allowed to do an action.
+//
+// swagger:ignore
+type InputAllowedSubjects struct {
+	// Resource is the resource that access is requested to.
+	Resource string `json:"resource"`
+
+	// Action is the action that is requested on the resource.
+	Action string `json:"action"`
+
+	// Context is the request's environmental context.
+	Context map[string]interface{} `json:"context"`
+}

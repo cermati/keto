@@ -9,3 +9,12 @@ type AuthorizationResult struct {
 	// required: true
 	Allowed bool `json:"allowed"`
 }
+
+// AuthorizedSubjectsResult is a list of subjects allowed to do an action.
+// swagger:model authorizedSubjectsResult
+type AuthorizedSubjectsResult struct {
+	// Subjects is a list of subjects allowed to do an action
+	//
+	// required: true
+	Subjects []string `json:"subjects"`
+}

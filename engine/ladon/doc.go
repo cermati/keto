@@ -30,6 +30,32 @@ type oryAccessControlPolicyAllowedInput struct {
 	Context map[string]interface{} `json:"context"`
 }
 
+// swagger:parameters doOryAccessControlPoliciesAllowedSubjects
+type doOryAccessControlPoliciesAllowedSubjects struct {
+	// The ORY Access Control Policy flavor. Can be "regex", "glob", and "exact".
+	//
+	// in: path
+	// required: true
+	Flavor string `json:"flavor"`
+
+	// in: body
+	Body oryAccessControlPolicyAllowedSubjectsInput
+}
+
+// Input for getting a list of subjects that are allowed to do an action.
+//
+// swagger:model oryAccessControlPolicyAllowedSubjectsInput
+type oryAccessControlPolicyAllowedSubjectsInput struct {
+	// Resource is the resource that access is requested to.
+	Resource string `json:"resource"`
+
+	// Action is the action that is requested on the resource.
+	Action string `json:"action"`
+
+	// Context is the request's environmental context.
+	Context map[string]interface{} `json:"context"`
+}
+
 // swagger:parameters upsertOryAccessControlPolicy
 type upsertOryAccessControlPolicy struct {
 	// The ORY Access Control Policy flavor. Can be "regex", "glob", and "exact".
